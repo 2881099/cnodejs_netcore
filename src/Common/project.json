@@ -1,0 +1,25 @@
+﻿{
+	"version": "1.0.0-*",
+	"dependencies": {
+		"Google.Protobuf": "3.1.0",
+		"Microsoft.Extensions.Caching.Abstractions": "1.0.0",
+		"Microsoft.Extensions.Logging": "1.0.0",
+		"Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+		"Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+		"MySql.Data": "7.0.5-IR21",
+		"NETStandard.Library": "1.6.0",
+		"Newtonsoft.Json": "9.0.1",
+		"StackExchange.Redis": "1.1.608",
+		"System.Collections.Specialized": "4.0.1",
+		"System.Diagnostics.TextWriterTraceListener": "4.0.0",
+		"System.IO.FileSystem.Watcher": "4.0.0",
+		"System.Runtime.Serialization.Json": "4.0.2",
+		"System.Threading.Thread": "4.0.0",
+		"System.Xml.XmlDocument": "4.0.1"
+	},
+	"frameworks": {
+		"netstandard1.6": {
+			"imports": "dnxcore50"
+		}
+	}
+}
