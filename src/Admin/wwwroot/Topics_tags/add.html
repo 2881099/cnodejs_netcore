@@ -1,0 +1,85 @@
+﻿
+<div class="box">
+	<div class="box-header with-border">
+		<h3 class="box-title" id="box-title"></h3>
+	</div>
+	<div class="box-body">
+		<div class="table-responsive">
+
+			<form id="form_add">
+				<div>
+					<table cellspacing="0" rules="all" class="table table-bordered table-hover" border="1" style="border-collapse:collapse;">
+						<tr>
+							<td>tags_id</td>
+							<td>
+								<select name="Tags_id">
+									<option value="">------ 请选择 ------</option>
+									<option @for="a in items" value="{#a.Id}">{#a.Keyname}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>topics_id</td>
+							<td>
+								<select name="Topics_id">
+									<option value="">------ 请选择 ------</option>
+									<option @for="a in items" value="{#a.Id}">{#a.Title}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td width="8%">&nbsp</td>
+							<td><input type="submit" value="更新" />&nbsp;<input type="button" value="取消" /></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+(function () {
+	var ajaxs = 3;
+	var data = {};
+	var form = $('#form_add')[0];
+	var geturl = '/api/Topics_tags/'; for (var a in top.mainViewNav.query) geturl += top.mainViewNav.query[a] + '/';
+
+	function initUI() {
+		fillForm(form, data.item);
+		top.mainViewInit();
+		$(form).submit(function () {
+			if (data.item)
+				$.ajax({ url: geturl, type: 'PUT', dataType: 'json', data: $(this).serialize(), success: function (rt) {
+					if (!rt.success) return alert(rt.message);
+					top.mainViewNav.goto('./');
+				}});
+			else
+				$.ajax({ url: '/api/Topics_tags/', type: 'POST', dataType: 'json', data: $(this).serialize(), success: function (rt) {
+					if (!rt.success) return alert(rt.message);
+					top.mainViewNav.goto('./');
+				}});
+			return false;
+		});
+	}
+
+	if (geturl === '/api/Topics_tags/')
+		--ajaxs;
+	else
+		$.getJSON(geturl, function (rt) {
+			if (rt.success) data.item = rt.data.item;
+			if (--ajaxs <= 0) initUI();
+		});
+
+	$.getJSON('/api/Tags/', { limit: 2000 }, function (rt) {
+		renderTpl(form.Tags_id, rt.data);
+		if (--ajaxs <= 0) initUI();
+	});
+	$.getJSON('/api/Topics/', { limit: 2000 }, function (rt) {
+		renderTpl(form.Topics_id, rt.data);
+		if (--ajaxs <= 0) initUI();
+	});
+})();
+</script>
+

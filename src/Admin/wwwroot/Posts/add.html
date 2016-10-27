@@ -1,0 +1,109 @@
+﻿
+<div class="box">
+	<div class="box-header with-border">
+		<h3 class="box-title" id="box-title"></h3>
+	</div>
+	<div class="box-body">
+		<div class="table-responsive">
+
+			<form id="form_add">
+				<div>
+					<table cellspacing="0" rules="all" class="table table-bordered table-hover" border="1" style="border-collapse:collapse;">
+						<tr update-visible style="display:none">
+							<td>id</td>
+							<td><input name="Id" type="text" readonly class="datepicker" style="width:20%;background-color:#ddd;" /></td>
+						</tr>
+						<tr>
+							<td>主题</td>
+							<td>
+								<select name="Topics_id">
+									<option value="">------ 请选择 ------</option>
+									<option @for="a in items" value="{#a.Id}">{#a.Title}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>作者</td>
+							<td>
+								<select name="Users_id">
+									<option value="">------ 请选择 ------</option>
+									<option @for="a in items" value="{#a.Id}">{#a.Username}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>内容</td>
+							<td><textarea name="Content" style="width:100%;height:100px;" editor="ueditor"></textarea></td>
+						</tr>
+						<tr>
+							<td>顶</td>
+							<td><input name="Count_good" type="text" class="form-control" data-inputmask="'mask': '9', 'repeat': 6, 'greedy': false" data-mask style="width:200px;" /></td>
+						</tr>
+						<tr>
+							<td>踩</td>
+							<td><input name="Count_notgood" type="text" class="form-control" data-inputmask="'mask': '9', 'repeat': 6, 'greedy': false" data-mask style="width:200px;" /></td>
+						</tr>
+						<tr update-visible style="display:none">
+							<td>创建时间</td>
+							<td><input name="Create_time" type="text" readonly class="datepicker" style="width:20%;background-color:#ddd;" /></td>
+						</tr>
+						<tr>
+							<td>楼层</td>
+							<td><input name="Index" type="text" class="form-control" data-inputmask="'mask': '9', 'repeat': 6, 'greedy': false" data-mask style="width:200px;" /></td>
+						</tr>
+						<tr>
+							<td width="8%">&nbsp</td>
+							<td><input type="submit" value="更新" />&nbsp;<input type="button" value="取消" /></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+(function () {
+	var ajaxs = 3;
+	var data = {};
+	var form = $('#form_add')[0];
+	var geturl = '/api/Posts/'; for (var a in top.mainViewNav.query) geturl += top.mainViewNav.query[a] + '/';
+
+	function initUI() {
+		fillForm(form, data.item);
+		top.mainViewInit();
+		$(form).submit(function () {
+			if (data.item)
+				$.ajax({ url: geturl, type: 'PUT', dataType: 'json', data: $(this).serialize(), success: function (rt) {
+					if (!rt.success) return alert(rt.message);
+					top.mainViewNav.goto('./');
+				}});
+			else
+				$.ajax({ url: '/api/Posts/', type: 'POST', dataType: 'json', data: $(this).serialize(), success: function (rt) {
+					if (!rt.success) return alert(rt.message);
+					top.mainViewNav.goto('./');
+				}});
+			return false;
+		});
+	}
+
+	if (geturl === '/api/Posts/')
+		--ajaxs;
+	else
+		$.getJSON(geturl, function (rt) {
+			if (rt.success) data.item = rt.data.item;
+			if (--ajaxs <= 0) initUI();
+		});
+
+	$.getJSON('/api/Topics/', { limit: 2000 }, function (rt) {
+		renderTpl(form.Topics_id, rt.data);
+		if (--ajaxs <= 0) initUI();
+	});
+	$.getJSON('/api/Users/', { limit: 2000 }, function (rt) {
+		renderTpl(form.Users_id, rt.data);
+		if (--ajaxs <= 0) initUI();
+	});
+})();
+</script>
+
