@@ -5,21 +5,22 @@
 
 <div id='sidebar'>
 
-	@{ await Html.RenderPartialAsync("_Partial右侧_登陆"); }
+	@{
+		await Html.RenderPartialAsync("_Partial右侧_登陆");
 
-	@if (user != null) {
-		await Html.RenderPartialAsync("_Partial右侧_发布话题");
+		if (user != null) {
+			await Html.RenderPartialAsync("_Partial右侧_发布话题");
+		}
+
+		await Html.RenderPartialAsync("_Partial右侧_ads");
+
+		if (user != null) {
+			await Html.RenderPartialAsync("_Partial右侧_无人回复的话题");
+		}
+
+		await Html.RenderPartialAsync("_Partial右侧_积分榜");
+		await Html.RenderPartialAsync("_Partial右侧_友情社区");
 	}
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_ads"); }
-
-	@if (user != null) {
-		await Html.RenderPartialAsync("_Partial右侧_无人回复的话题");
-	}
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_积分榜"); }
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_友情社区"); }
 
 </div>
 

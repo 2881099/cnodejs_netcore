@@ -12,13 +12,10 @@
 	@{ 
 		ViewData["_Partial右侧_用户信息_title"] = "作者";
 		await Html.RenderPartialAsync("_Partial右侧_用户信息", author);
+		await Html.RenderPartialAsync("_Partial右侧_ads");
+		await Html.RenderPartialAsync("_Partial右侧_作者其它话题");
+		await Html.RenderPartialAsync("_Partial右侧_无人回复的话题");
 	}
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_ads"); }
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_作者其它话题"); }
-
-	@{ await Html.RenderPartialAsync("_Partial右侧_无人回复的话题"); }
 
 </div>
 

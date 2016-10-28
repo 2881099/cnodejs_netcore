@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using cnodejs.BLL;
 using cnodejs.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace cnodejs.Admin.Controllers {
 	[Route("/")]
@@ -42,7 +43,7 @@ namespace cnodejs.Admin.Controllers {
 		}
 		[需要登陆]
 		[HttpGet("topic/create")]
-		public ViewResult 发布话题() {
+		public ViewResult 发布话题页() {
 			ViewBag.tags = Tags.Select.ToList(60 * 30, "tags").Where<TagsInfo>(a => a.Id > 1); //非精华
 			return View();
 		}
@@ -101,18 +102,32 @@ namespace cnodejs.Admin.Controllers {
 			return new RedirectResult("/topic/" + id);
 		}
 		[需要登陆]
-		[HttpPost("topic/{id}")]
-		public ViewResult 收藏(ulong id) {
+		[HttpPost("topic/collect")]
+		public IActionResult 收藏([FromForm] ulong topic_id) {
+			LoginUser.FlagTopics(topic_id);
+			return View();
+		}
+		[需要登陆]
+		[HttpPost("topic/de_collect")]
+		public IActionResult 取消收藏([FromForm] ulong topic_id) {
+			LoginUser.UnflagTopics(topic_id);
 			return View();
 		}
 		[需要登陆]
 		[HttpPost("topic/{id}/delete")]
-		public ViewResult 删除(ulong id) {
-			return View();
+		public IActionResult 删除(ulong id) {
+			TopicsInfo topic = Topics.GetItem(id);
+			if (topic.Owner_users_id == LoginUser.Id || LoginUser.Id == 1 //管理员
+				) {
+				Topics.Delete(id);
+				return Json(new { success = true, message = "成功" });
+			}
+			return Json(new { success = false, message = "没有权限删除" });
 		}
 		[HttpPost("reply/{id}/up")]
-		public ViewResult 点赞(ulong id) {
-			return View();
+		public IActionResult 点赞(ulong id) {
+			Posts.UpdateDiy(id).SetCount_goodIncrement(1).ExecuteNonQuery();
+			return Json(new { success = true, message = "成功" });
 		}
 
 		[HttpGet("getstart")]
@@ -137,20 +152,26 @@ namespace cnodejs.Admin.Controllers {
 			return View();
 		}
 		[HttpPost("signin")]
-		public ViewResult 登陆([FromForm] string name, [FromForm] string pass, [FromForm] string _csrf) {
-			return View();
+		public IActionResult 登陆([FromForm] string name, [FromForm] string pass, [FromForm] string _csrf) {
+			UsersInfo user = Users.GetItemByUsername(name);
+			if (user == null) user = Users.GetItemByEmail(name);
+			if (user == null) return Json(new { success = false, message = "账号不存在" });
+			if (user.Password != pass) return Json(new { success = false, message = "密码不正确" });
+			Session.SetString("login.username", user.Username);
+			return new RedirectResult("/");
 		}
 		[需要登陆]
 		[HttpPost("signout")]
-		public ViewResult 退出登陆() {
-			return View();
+		public IActionResult 退出登陆() {
+			Session.Remove("login.username");
+			return new RedirectResult("/");
 		}
 		[HttpGet("search_pass")]
 		public ViewResult 找回密码页() {
 			return View();
 		}
 		[HttpPost("search_pass")]
-		public ViewResult 找回密码([FromForm] string email, [FromForm] string _csrf) {
+		public IActionResult 找回密码([FromForm] string email, [FromForm] string _csrf) {
 			return View();
 		}
 
@@ -162,6 +183,7 @@ namespace cnodejs.Admin.Controllers {
 		[需要登陆]
 		[HttpGet("setting")]
 		public ViewResult 设置页() {
+			ViewBag.friendlylinks4 = Friendlylinks.Select.OrderBy("sort desc").Limit(4).ToList(60 * 30, "friendlylinks4");
 			return View();
 		}
 		[需要登陆]
