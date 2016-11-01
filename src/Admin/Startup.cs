@@ -12,6 +12,10 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
 using NLog.Extensions.Logging;
 using Swashbuckle.Swagger.Model;
+using System.IO;
+using Microsoft.AspNetCore.DataProtection;
+using cnodejs.BLL;
+using cnodejs.Model;
 
 namespace cnodejs.Admin {
 	public class Startup {
@@ -19,8 +23,14 @@ namespace cnodejs.Admin {
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-				.AddEnvironmentVariables();
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+			if (env.IsDevelopment()) {
+				// For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+				//builder.AddUserSecrets();
+			}
+
+			builder.AddEnvironmentVariables();
 			Configuration = builder.Build();
 		}
 
@@ -32,7 +42,12 @@ namespace cnodejs.Admin {
 					Configuration = IniHelper.LoadIni("../web.config")["connectionStrings"]["cnodejsRedisConnectionString"],
 					InstanceName = "Session_cnodejs"
 				})).AddSession();
+
 			services.AddMvc();
+
+			//services.Configure<Microsoft.AspNetCore.Server.Kestrel.KestrelServerOptions>(option => {
+			//	option.UseHttps(new System.Security.Cryptography.X509Certificates.X509Certificate2());
+			//});
 
 			services.ConfigureSwaggerGen(options => {
 				options.SingleApiVersion(new Info {
@@ -55,9 +70,9 @@ namespace cnodejs.Admin {
 			Console.InputEncoding = Encoding.GetEncoding("GB2312");
 
 			// 以下写日志会严重影响吞吐量，高并发项目建议改成 redis 订阅发布形式
-			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			//loggerFactory.AddNLog().AddDebug();
-			//env.ConfigureNLog("nlog.config");
+			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+			loggerFactory.AddNLog().AddDebug();
+			env.ConfigureNLog("nlog.config");
 
 			if (env.IsDevelopment())
 				app.UseDeveloperExceptionPage();
@@ -67,6 +82,8 @@ namespace cnodejs.Admin {
 			app.UseSession(new SessionOptions() { IdleTimeout = TimeSpan.FromMinutes(30) });
 			app.UseMvc();
 			app.UseDefaultFiles().UseStaticFiles(); //UseDefaultFiles 必须在 UseStaticFiles 之前调用
+
+			//app.UseCors(builder => builder.WithOrigins("https://*").AllowAnyHeader());
 
 			if (env.IsDevelopment())
 				app.UseSwagger().UseSwaggerUi();

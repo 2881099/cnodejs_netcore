@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Identity;
 using cnodejs.BLL;
 using cnodejs.Model;
 
@@ -19,10 +20,9 @@ public class HomeBaseController : Controller {
 
 	public UsersInfo LoginUser { get; private set; }
 	public override void OnActionExecuting(ActionExecutingContext context) {
-		Session.SetString("login.username", "2881099");
 		string username = Session.GetString("login.username");
-		if (string.IsNullOrEmpty(username))
-			Session.SetString("login.username", username = "2881099");
+		//if (string.IsNullOrEmpty(username))
+		//	Session.SetString("login.username", username = "2881099");
 		if (!string.IsNullOrEmpty(username))
 			LoginUser = Users.GetItemByUsername(username);
 

@@ -79,7 +79,7 @@ namespace Microsoft.Extensions.Caching.Redis {
 
 			var absoluteExpiration = GetAbsoluteExpiration(creationTime, options);
 
-			await _cache.ScriptEvaluateAsync(SetScript, new RedisKey[] { _instance + key },
+			_cache.ScriptEvaluate(SetScript, new RedisKey[] { _instance + key },
 				new RedisValue[]
 				{
 						absoluteExpiration?.Ticks ?? NotPresent,
@@ -107,7 +107,7 @@ namespace Microsoft.Extensions.Caching.Redis {
 
 		private async Task ConnectAsync() {
 			if (_connection == null) {
-				_connection = await ConnectionMultiplexer.ConnectAsync(_options.Configuration);
+				_connection = ConnectionMultiplexer.Connect(_options.Configuration);
 				_cache = _connection.GetDatabase();
 			}
 		}
@@ -127,9 +127,9 @@ namespace Microsoft.Extensions.Caching.Redis {
 			// TODO: Can this be done in one operation on the server side? Probably, the trick would just be the DateTimeOffset math.
 			RedisValue[] results;
 			if (getData) {
-				results = await _cache.HashMemberGetAsync(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey, DataKey);
+				results = _cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey, DataKey);
 			} else {
-				results = await _cache.HashMemberGetAsync(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey);
+				results = _cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey);
 			}
 
 			// TODO: Error handling
@@ -160,7 +160,7 @@ namespace Microsoft.Extensions.Caching.Redis {
 
 			await ConnectAsync();
 
-			await _cache.KeyDeleteAsync(_instance + key);
+			_cache.KeyDelete(_instance + key);
 			// TODO: Error handling
 		}
 
@@ -195,7 +195,7 @@ namespace Microsoft.Extensions.Caching.Redis {
 				} else {
 					expr = sldExpr;
 				}
-				await _cache.KeyExpireAsync(_instance + key, expr);
+				_cache.KeyExpire(_instance + key, expr);
 				// TODO: Error handling
 			}
 		}

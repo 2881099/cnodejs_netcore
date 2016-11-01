@@ -1,4 +1,4 @@
-﻿{
+{
 	"dependencies": {
 		"Microsoft.NETCore.App": {
 			"version": "1.0.0",
@@ -17,7 +17,12 @@
 		"Microsoft.AspNetCore.Session": "1.0.0",
 		"NLog.Extensions.Logging": "1.0.0-rtm-alpha4",
 		"System.Text.Encoding.CodePages": "4.0.1",
-		"Swashbuckle": "6.0.0-beta902"
+					"Swashbuckle": "6.0.0-beta902",
+        "Microsoft.AspNetCore.Identity": "1.0.0",
+					"Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
+					"Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.0",
+					"Microsoft.AspNetCore.DataProtection.Extensions": "1.0.0",
+					"Microsoft.AspNetCore.Authentication.OAuth": "1.0.0"
 	},
 
 	"tools": {

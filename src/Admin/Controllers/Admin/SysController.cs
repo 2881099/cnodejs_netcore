@@ -50,37 +50,61 @@ namespace cnodejs.Admin.Controllers {
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/posts/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/posts/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "sysdoc", 3, "/sysdoc/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "roleclaim", 3, "/roleclaim/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/roleclaim/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/roleclaim/add.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/roleclaim/edit.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/roleclaim/del.aspx");
+
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "roles", 4, "/roles/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/roles/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/roles/add.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/roles/edit.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/roles/del.aspx");
+
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "roles_users", 5, "/roles_users/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/roles_users/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/roles_users/add.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/roles_users/edit.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/roles_users/del.aspx");
+
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "sysdoc", 6, "/sysdoc/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/sysdoc/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/sysdoc/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/sysdoc/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/sysdoc/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "tags", 4, "/tags/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "tags", 7, "/tags/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/tags/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/tags/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/tags/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/tags/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "topics", 5, "/topics/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "topics", 8, "/topics/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/topics/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/topics/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/topics/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/topics/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "topics_tags", 6, "/topics_tags/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "topics_tags", 9, "/topics_tags/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/topics_tags/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/topics_tags/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/topics_tags/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/topics_tags/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "users", 7, "/users/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "userclaim", 10, "/userclaim/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/userclaim/");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/userclaim/add.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/userclaim/edit.aspx");
+			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/userclaim/del.aspx");
+
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "users", 11, "/users/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/users/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/users/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/users/edit.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "删除", 4, "/users/del.aspx");
 
-			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "users_topics", 8, "/users_topics/");
+			dir2 = Sysdir.Insert(dir1.Id, DateTime.Now, "users_topics", 12, "/users_topics/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "列表", 1, "/users_topics/");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "添加", 2, "/users_topics/add.aspx");
 			dir3 = Sysdir.Insert(dir2.Id, DateTime.Now, "编辑", 3, "/users_topics/edit.aspx");

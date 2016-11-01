@@ -1,11 +1,34 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace cnodejs.Model {
 
-	public partial class UsersInfo {
+	public partial class UsersInfo : IQueryable {
+		Type IQueryable.ElementType {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		Expression IQueryable.Expression {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		IQueryProvider IQueryable.Provider {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			throw new NotImplementedException();
+		}
+
 		#region fields
 		private ulong? _Id;
 		private DateTime? _Create_time;
@@ -204,11 +227,25 @@ namespace cnodejs.Model {
 				return _obj_postss;
 			}
 		}
+		private List<RolesInfo> _obj_roless;
+		public List<RolesInfo> Obj_roless {
+			get {
+				if (_obj_roless == null) _obj_roless = cnodejs.BLL.Roles.SelectByUsers_id(_Id.Value).ToList();
+				return _obj_roless;
+			}
+		}
 		private List<TopicsInfo> _obj_owner_topicss;
 		public List<TopicsInfo> Obj_owner_topicss {
 			get {
 				if (_obj_owner_topicss == null) _obj_owner_topicss = cnodejs.BLL.Topics.SelectByOwner_users_id(_Id).Limit(500).ToList();
 				return _obj_owner_topicss;
+			}
+		}
+		private List<UserclaimInfo> _obj_userclaims;
+		public List<UserclaimInfo> Obj_userclaims {
+			get {
+				if (_obj_userclaims == null) _obj_userclaims = cnodejs.BLL.Userclaim.SelectByUsers_id(_Id).Limit(500).ToList();
+				return _obj_userclaims;
 			}
 		}
 		private List<TopicsInfo> _obj_topicss;
@@ -223,6 +260,7 @@ namespace cnodejs.Model {
 		public cnodejs.DAL.Users.SqlUpdateBuild UpdateDiy {
 			get { return cnodejs.BLL.Users.UpdateDiy(this, _Id); }
 		}
+
 		public PostsInfo AddPosts(PostsInfo Posts, TopicsInfo Topics, string Content, int? Count_good, int? Count_notgood, DateTime? Create_time, uint? Index) {
 			return AddPosts(Posts.Id, Topics.Id, Content, Count_good, Count_notgood, Create_time, Index);
 		}
@@ -238,6 +276,27 @@ namespace cnodejs.Model {
 				Index = Index});
 		}
 
+		public Roles_usersInfo FlagRoles(RolesInfo Roles) {
+			return FlagRoles(Roles.Id);
+		}
+		public Roles_usersInfo FlagRoles(uint? Roles_id) {
+			Roles_usersInfo item = cnodejs.BLL.Roles_users.GetItem(Roles_id, this.Id);
+			if (item == null) item = cnodejs.BLL.Roles_users.Insert(new Roles_usersInfo {
+				Roles_id = Roles_id, 
+				Users_id = this.Id});
+			return item;
+		}
+
+		public int UnflagRoles(RolesInfo Roles) {
+			return UnflagRoles(Roles.Id);
+		}
+		public int UnflagRoles(uint? Roles_id) {
+			return cnodejs.BLL.Roles_users.Delete(Roles_id, this.Id);
+		}
+		public int UnflagRolesALL() {
+			return cnodejs.BLL.Roles_users.DeleteByUsers_id(this.Id);
+		}
+
 		public TopicsInfo AddTopics(PostsInfo Last_posts, int? Count_posts, uint? Count_views, DateTime? Create_time, string Title, ulong? Top, DateTime? Update_time) {
 			return AddTopics(Last_posts.Id, Count_posts, Count_views, Create_time, Title, Top, Update_time);
 		}
@@ -251,6 +310,14 @@ namespace cnodejs.Model {
 				Title = Title, 
 				Top = Top, 
 				Update_time = Update_time});
+		}
+
+		public UserclaimInfo AddUserclaim(DateTime? Create_time, string Type, string Value) {
+			return cnodejs.BLL.Userclaim.Insert(new UserclaimInfo {
+				Users_id = this.Id, 
+				Create_time = Create_time, 
+				Type = Type, 
+				Value = Value});
 		}
 
 		public Users_topicsInfo FlagTopics(TopicsInfo Topics) {
@@ -274,6 +341,7 @@ namespace cnodejs.Model {
 			return cnodejs.BLL.Users_topics.DeleteByUsers_id(this.Id);
 		}
 
+		
 	}
 }
 

@@ -18,6 +18,24 @@ namespace cnodejs.Model {
 		public static IDictionary[] ToBson(this PostsInfo[] items, Func<PostsInfo, object> func = null) { return GetBson(items, func); }
 		public static IDictionary[] ToBson(this IEnumerable<PostsInfo> items, Func<PostsInfo, object> func = null) { return GetBson(items, func); }
 
+		public static string ToJson(this RoleclaimInfo item) { return string.Concat(item); }
+		public static string ToJson(this RoleclaimInfo[] items) { return GetJson(items); }
+		public static string ToJson(this IEnumerable<RoleclaimInfo> items) { return GetJson(items); }
+		public static IDictionary[] ToBson(this RoleclaimInfo[] items, Func<RoleclaimInfo, object> func = null) { return GetBson(items, func); }
+		public static IDictionary[] ToBson(this IEnumerable<RoleclaimInfo> items, Func<RoleclaimInfo, object> func = null) { return GetBson(items, func); }
+
+		public static string ToJson(this RolesInfo item) { return string.Concat(item); }
+		public static string ToJson(this RolesInfo[] items) { return GetJson(items); }
+		public static string ToJson(this IEnumerable<RolesInfo> items) { return GetJson(items); }
+		public static IDictionary[] ToBson(this RolesInfo[] items, Func<RolesInfo, object> func = null) { return GetBson(items, func); }
+		public static IDictionary[] ToBson(this IEnumerable<RolesInfo> items, Func<RolesInfo, object> func = null) { return GetBson(items, func); }
+
+		public static string ToJson(this Roles_usersInfo item) { return string.Concat(item); }
+		public static string ToJson(this Roles_usersInfo[] items) { return GetJson(items); }
+		public static string ToJson(this IEnumerable<Roles_usersInfo> items) { return GetJson(items); }
+		public static IDictionary[] ToBson(this Roles_usersInfo[] items, Func<Roles_usersInfo, object> func = null) { return GetBson(items, func); }
+		public static IDictionary[] ToBson(this IEnumerable<Roles_usersInfo> items, Func<Roles_usersInfo, object> func = null) { return GetBson(items, func); }
+
 		public static string ToJson(this SysdocInfo item) { return string.Concat(item); }
 		public static string ToJson(this SysdocInfo[] items) { return GetJson(items); }
 		public static string ToJson(this IEnumerable<SysdocInfo> items) { return GetJson(items); }
@@ -41,6 +59,12 @@ namespace cnodejs.Model {
 		public static string ToJson(this IEnumerable<Topics_tagsInfo> items) { return GetJson(items); }
 		public static IDictionary[] ToBson(this Topics_tagsInfo[] items, Func<Topics_tagsInfo, object> func = null) { return GetBson(items, func); }
 		public static IDictionary[] ToBson(this IEnumerable<Topics_tagsInfo> items, Func<Topics_tagsInfo, object> func = null) { return GetBson(items, func); }
+
+		public static string ToJson(this UserclaimInfo item) { return string.Concat(item); }
+		public static string ToJson(this UserclaimInfo[] items) { return GetJson(items); }
+		public static string ToJson(this IEnumerable<UserclaimInfo> items) { return GetJson(items); }
+		public static IDictionary[] ToBson(this UserclaimInfo[] items, Func<UserclaimInfo, object> func = null) { return GetBson(items, func); }
+		public static IDictionary[] ToBson(this IEnumerable<UserclaimInfo> items, Func<UserclaimInfo, object> func = null) { return GetBson(items, func); }
 
 		public static string ToJson(this UsersInfo item) { return string.Concat(item); }
 		public static string ToJson(this UsersInfo[] items) { return GetJson(items); }

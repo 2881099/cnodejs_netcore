@@ -121,6 +121,12 @@ namespace cnodejs.BLL {
 		public static UsersSelectBuild Select {
 			get { return new UsersSelectBuild(dal); }
 		}
+		public static UsersSelectBuild SelectByRoles(params RolesInfo[] items) {
+			return Select.WhereRoles(items);
+		}
+		public static UsersSelectBuild SelectByRoles_id(params uint[] ids) {
+			return Select.WhereRoles_id(ids);
+		}
 		public static UsersSelectBuild SelectByTopics(params TopicsInfo[] items) {
 			return Select.WhereTopics(items);
 		}
@@ -129,6 +135,14 @@ namespace cnodejs.BLL {
 		}
 	}
 	public partial class UsersSelectBuild : SelectBuild<UsersInfo, UsersSelectBuild> {
+		public UsersSelectBuild WhereRoles(params RolesInfo[] items) {
+			if (items == null) return this;
+			return WhereRoles_id(items.Where<RolesInfo>(a => a != null).Select<RolesInfo, uint>(a => a.Id.Value).ToArray());
+		}
+		public UsersSelectBuild WhereRoles_id(params uint[] ids) {
+			if (ids == null || ids.Length == 0) return this;
+			return base.Where(string.Format(@"EXISTS( SELECT `users_id` FROM `roles_users` WHERE `users_id` = a.`id` AND `roles_id` IN ({0}) )", string.Join<uint>(",", ids))) as UsersSelectBuild;
+		}
 		public UsersSelectBuild WhereTopics(params TopicsInfo[] items) {
 			if (items == null) return this;
 			return WhereTopics_id(items.Where<TopicsInfo>(a => a != null).Select<TopicsInfo, ulong>(a => a.Id.Value).ToArray());
