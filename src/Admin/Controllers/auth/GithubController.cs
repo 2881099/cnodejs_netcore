@@ -14,6 +14,8 @@ using System.Net;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace Admin.Controllers.auth
 {
@@ -35,14 +37,15 @@ namespace Admin.Controllers.auth
 			HttpClientHandler clientHandler = new HttpClientHandler { ClientCertificateOptions = ClientCertificateOption.Automatic };
 			clientHandler.ServerCertificateCustomValidationCallback = (a, b, c, d) => true;
 			HttpClient client = new HttpClient(clientHandler);
-			var json = $@"{{
-""client_id"" : ""{cfg["oauth:github:client_id"]}"",
-""client_secret"" : ""{cfg["oauth:github:client_secret"]}"", 
-""code"" : ""{code}"",
-""redirect_uri"" : ""{cfg["oauth:github:redirect_uri"]}"",
-""state"" : ""{state}""
-}}";
-			StringContent content = new StringContent(json);
+			var requestJson = JsonConvert.SerializeObject(new {
+				client_id = cfg["oauth:github:client_id"],
+				client_secret = cfg["oauth:github:client_secret"],
+				code = code,
+				redirect_uri = cfg["oauth:github:redirect_uri"],
+				state = state
+			});
+			StringContent content = new StringContent(requestJson);
+			content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 			var res = client.PostAsync("https://github.com/login/oauth/access_token", content).Result;
 			string rt = res.Content.ReadAsStringAsync().Result;
 			//access_token=e72e16c7e42f292c6912e7710c838347ae178b4a&scope=user%2Cgist&token_type=bearer

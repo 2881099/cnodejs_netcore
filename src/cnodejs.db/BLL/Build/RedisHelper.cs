@@ -16,7 +16,7 @@ namespace cnodejs.BLL {
 				if (ini.ContainsKey("connectionStrings")) ConnectionString = ini["connectionStrings"][key];
 				if (string.IsNullOrEmpty(ConnectionString)) throw new ArgumentNullException(key, string.Format("未定义 ../web.config 里的 ConnectionStrings 键 '{0}' 或值不正确！", key));
 			}
-			return ConnectionMultiplexer.ConnectAsync(ConnectionString).Result;
+			return ConnectionMultiplexer.Connect(ConnectionString);
 		}
 
 		private static ConnectionMultiplexer _connection;

@@ -26,6 +26,23 @@ namespace Microsoft.Extensions.Caching.Redis {
 		private ConnectionMultiplexer _connection;
 		private IDatabase _cache;
 
+		public ConnectionMultiplexer Connection {
+			get {
+				if (_connection == null || !_connection.IsConnected || _cache == null)
+					_connection = ConnectionMultiplexer.Connect(_options.Configuration);
+				return _connection;
+			}
+		}
+		public IDatabase Cache {
+			get {
+				if (_cache == null || !_cache.IsConnected("test")) {
+					_cache = null;
+					_cache = Connection.GetDatabase();
+				}
+				return _cache;
+			}
+		}
+
 		private readonly RedisCacheOptions _options;
 		private readonly string _instance;
 
@@ -33,53 +50,36 @@ namespace Microsoft.Extensions.Caching.Redis {
 			if (optionsAccessor == null) {
 				throw new ArgumentNullException(nameof(optionsAccessor));
 			}
-
 			_options = optionsAccessor.Value;
-
-			// This allows partitioning a single backend cache for use with multiple apps/services.
 			_instance = _options.InstanceName ?? string.Empty;
 		}
 
 		public byte[] Get(string key) {
-			if (key == null) {
-				throw new ArgumentNullException(nameof(key));
-			}
-
 			return GetAndRefresh(key, getData: true);
 		}
 
-		public async Task<byte[]> GetAsync(string key) {
-			if (key == null) {
-				throw new ArgumentNullException(nameof(key));
-			}
-
-			return await GetAndRefreshAsync(key, getData: true);
+		public Task<byte[]> GetAsync(string key) {
+			return GetAndRefreshAsync(key, getData: true);
 		}
 
 		public void Set(string key, byte[] value, DistributedCacheEntryOptions options) {
 			this.SetAsync(key, value, options).Wait();
 		}
 
-		public async Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options) {
+		public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options) {
 			if (key == null) {
 				throw new ArgumentNullException(nameof(key));
 			}
-
 			if (value == null) {
 				throw new ArgumentNullException(nameof(value));
 			}
-
 			if (options == null) {
 				throw new ArgumentNullException(nameof(options));
 			}
 
-			await ConnectAsync();
-
 			var creationTime = DateTimeOffset.UtcNow;
-
 			var absoluteExpiration = GetAbsoluteExpiration(creationTime, options);
-
-			_cache.ScriptEvaluate(SetScript, new RedisKey[] { _instance + key },
+			Cache.ScriptEvaluate(SetScript, new RedisKey[] { _instance + key },
 				new RedisValue[]
 				{
 						absoluteExpiration?.Ticks ?? NotPresent,
@@ -87,49 +87,37 @@ namespace Microsoft.Extensions.Caching.Redis {
 						GetExpirationInSeconds(creationTime, absoluteExpiration, options) ?? NotPresent,
 						value
 				});
+			return Task.Run(() => { });
 		}
 
 		public void Refresh(string key) {
 			this.RefreshAsync(key).Wait();
 		}
 
-		public async Task RefreshAsync(string key) {
+		public Task RefreshAsync(string key) {
 			if (key == null) {
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			await GetAndRefreshAsync(key, getData: false);
-		}
-
-		private void Connect() {
-			this.ConnectAsync().Wait();
-		}
-
-		private async Task ConnectAsync() {
-			if (_connection == null) {
-				_connection = ConnectionMultiplexer.Connect(_options.Configuration);
-				_cache = _connection.GetDatabase();
-			}
+			return GetAndRefreshAsync(key, getData: false);
 		}
 
 		private byte[] GetAndRefresh(string key, bool getData) {
 			return this.GetAndRefreshAsync(key, getData).Result;
 		}
 
-		private async Task<byte[]> GetAndRefreshAsync(string key, bool getData) {
+		private Task<byte[]> GetAndRefreshAsync(string key, bool getData) {
 			if (key == null) {
 				throw new ArgumentNullException(nameof(key));
 			}
-
-			await ConnectAsync();
 
 			// This also resets the LRU status as desired.
 			// TODO: Can this be done in one operation on the server side? Probably, the trick would just be the DateTimeOffset math.
 			RedisValue[] results;
 			if (getData) {
-				results = _cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey, DataKey);
+				results = Cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey, DataKey);
 			} else {
-				results = _cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey);
+				results = Cache.HashMemberGet(_instance + key, AbsoluteExpirationKey, SlidingExpirationKey);
 			}
 
 			// TODO: Error handling
@@ -139,11 +127,11 @@ namespace Microsoft.Extensions.Caching.Redis {
 				DateTimeOffset? absExpr;
 				TimeSpan? sldExpr;
 				MapMetadata(results, out absExpr, out sldExpr);
-				await RefreshAsync(key, absExpr, sldExpr);
+				RefreshAsync(key, absExpr, sldExpr).Wait();
 			}
 
 			if (results.Length >= 3 && results[2].HasValue) {
-				return results[2];
+				return Task.FromResult<byte[]>(results[2]);
 			}
 
 			return null;
@@ -153,14 +141,13 @@ namespace Microsoft.Extensions.Caching.Redis {
 			this.RemoveAsync(key).Wait();
 		}
 
-		public async Task RemoveAsync(string key) {
+		public Task RemoveAsync(string key) {
 			if (key == null) {
 				throw new ArgumentNullException(nameof(key));
 			}
 
-			await ConnectAsync();
-
-			_cache.KeyDelete(_instance + key);
+			Cache.KeyDelete(_instance + key);
+			return Task.Run(() => { });
 			// TODO: Error handling
 		}
 
@@ -181,7 +168,7 @@ namespace Microsoft.Extensions.Caching.Redis {
 			this.RefreshAsync(key, absExpr, sldExpr).Wait();
 		}
 
-		private async Task RefreshAsync(string key, DateTimeOffset? absExpr, TimeSpan? sldExpr) {
+		private Task RefreshAsync(string key, DateTimeOffset? absExpr, TimeSpan? sldExpr) {
 			if (key == null) {
 				throw new ArgumentNullException(nameof(key));
 			}
@@ -195,9 +182,10 @@ namespace Microsoft.Extensions.Caching.Redis {
 				} else {
 					expr = sldExpr;
 				}
-				_cache.KeyExpire(_instance + key, expr);
+				Cache.KeyExpire(_instance + key, expr);
 				// TODO: Error handling
 			}
+			return Task.Run(() => { });
 		}
 
 		private static long? GetExpirationInSeconds(DateTimeOffset creationTime, DateTimeOffset? absoluteExpiration, DistributedCacheEntryOptions options) {
@@ -258,26 +246,21 @@ namespace Microsoft.Extensions.Caching.Redis {
 		private const string HmGetScript = (@"return redis.call('HMGET', KEYS[1], unpack(ARGV))");
 
 		internal static RedisValue[] HashMemberGet(this IDatabase cache, string key, params string[] members) {
+			// TODO: Error checking?
+			return HashMemberGetAsync(cache, key, members).Result;
+		}
+
+		internal static Task<RedisValue[]> HashMemberGetAsync(
+			this IDatabase cache,
+			string key,
+			params string[] members) {
 			var result = cache.ScriptEvaluate(
 				HmGetScript,
 				new RedisKey[] { key },
 				GetRedisMembers(members));
 
 			// TODO: Error checking?
-			return (RedisValue[])result;
-		}
-
-		internal static async Task<RedisValue[]> HashMemberGetAsync(
-			this IDatabase cache,
-			string key,
-			params string[] members) {
-			var result = await cache.ScriptEvaluateAsync(
-				HmGetScript,
-				new RedisKey[] { key },
-				GetRedisMembers(members));
-
-			// TODO: Error checking?
-			return (RedisValue[])result;
+			return Task.FromResult((RedisValue[])result);
 		}
 
 		private static RedisValue[] GetRedisMembers(params string[] members) {
