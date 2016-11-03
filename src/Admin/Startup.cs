@@ -37,13 +37,14 @@ namespace cnodejs.Admin {
 		public IConfigurationRoot Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services) {
-			services.AddSingleton<IDistributedCache>(
-				new RedisCache(new RedisCacheOptions {
-					Configuration = IniHelper.LoadIni("../web.config")["connectionStrings"]["cnodejsRedisConnectionString"],
-					InstanceName = "Session_cnodejs"
-				})).AddSession();
-
-			services.AddMvc();
+			services.AddSingleton<IDistributedCache>(new RedisCache(new RedisCacheOptions {
+				Configuration = IniHelper.LoadIni("../web.config")["connectionStrings"]["cnodejsRedisConnectionString"],
+				InstanceName = "Session_cnodejs"
+			}));
+			services.AddSession(a => {
+				a.IdleTimeout = TimeSpan.FromMinutes(30);
+				a.CookieName = "Session_cnodejs";
+			}).AddMvc();
 
 			//services.Configure<Microsoft.AspNetCore.Server.Kestrel.KestrelServerOptions>(option => {
 			//	option.UseHttps(new System.Security.Cryptography.X509Certificates.X509Certificate2());
@@ -79,8 +80,7 @@ namespace cnodejs.Admin {
 
 			cnodejs.DAL.SqlHelper.Instance.Log = loggerFactory.CreateLogger("cnodejs_DAL_sqlhelper");
 
-			app.UseSession(new SessionOptions() { IdleTimeout = TimeSpan.FromMinutes(30) });
-			app.UseMvc();
+			app.UseSession().UseMvc();
 			app.UseDefaultFiles().UseStaticFiles(); //UseDefaultFiles 必须在 UseStaticFiles 之前调用
 
 			//app.UseCors(builder => builder.WithOrigins("https://*").AllowAnyHeader());
