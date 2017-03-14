@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <AssemblyName>Common</AssemblyName>
+    <PackageId>Common</PackageId>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.0.2" />
+    <PackageReference Include="MySql.Data" Version="7.0.5-IR21" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="1.1.608" />
+    <PackageReference Include="System.Collections.Specialized" Version="4.0.1" />
+    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
+    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.0.0" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.0.2" />
+    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.0.1" />
+  </ItemGroup>
+
+</Project>

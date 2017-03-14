@@ -20,6 +20,7 @@ using cnodejs.Model;
 namespace cnodejs.Admin {
 	public class Startup {
 		public Startup(IHostingEnvironment env) {
+
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)

@@ -1,17 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02BB22D4-A3A7-4768-9086-BC1327A7D14E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7FFABA5-53E6-4225-9403-5DB6870DA80C}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{7083A5BF-8BBF-43B6-971A-2A2CA6A1727E}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Common", "src\Common\Common.xproj", "{7083A5BF-8BBF-43B6-971A-2A2CA6A1727E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cnodejs.db", "src\cnodejs.db\cnodejs.db.csproj", "{697622EB-1D25-428A-9ADB-05FA60D8169F}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "cnodejs.db", "src\cnodejs.db\cnodejs.db.xproj", "{697622EB-1D25-428A-9ADB-05FA60D8169F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Admin", "src\Admin\Admin.csproj", "{D270D82D-736B-4EAA-9F2F-3C99D89BF583}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Admin", "src\Admin\Admin.xproj", "{D270D82D-736B-4EAA-9F2F-3C99D89BF583}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
